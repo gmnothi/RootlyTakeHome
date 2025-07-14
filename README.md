@@ -14,7 +14,7 @@
 
 # Rootly Incident Assistant
 
-An AI-powered incident management tool that analyzes incident meeting transcripts in real-time and provides intelligent suggestions to incident responders.
+An AI-powered incident management tool that analyzes incident meeting transcripts in real-time and provides intelligent suggestions to incident responders. (Definitely not a Rootly rip-off! 😡)
 
 ## 🚀 Features
 
