@@ -5,7 +5,7 @@ An AI-powered incident management tool that analyzes incident meeting transcript
 ## 🚀 Features
 
 - **Real-time Transcript Processing**: Processes incident meeting transcripts at 10x speed
-- **AI-Powered Suggestions**: Uses GPT-3.5-turbo to identify:
+- **AI-Powered Suggestions**: Uses GPT-4.0-mini to identify:
   - Action items and follow-ups
   - Trigger events for timeline
   - Potential root causes
@@ -20,7 +20,7 @@ An AI-powered incident management tool that analyzes incident meeting transcript
 - **PostgreSQL** - Database
 - **Sidekiq** - Background job processing
 - **Hotwire** - Real-time UI updates
-- **OpenAI GPT-3.5-turbo** - AI suggestion generation
+- **OpenAI GPT-4.0-mini** - AI suggestion generation
 - **ElevenLabs** - Text-to-speech for audio alerts
 - **Bootstrap 5** - UI framework
 
@@ -115,6 +115,11 @@ The application comes with a sample incident transcript (`rootly_takehome_transc
 
 - **`IncidentsController`**: Handles replay simulation and suggestion endpoints
 - **`SuggestionsController`**: Manages suggestion CRUD operations
+
+## 🧭 Decisions
+
+- **Independent Incident Processing:** Each incident replay is processed independently in its own job. This ensures that multiple incidents can be replayed or analyzed in parallel without interfering with each other.
+- **Redis for Progress Tracking:** Redis is used to store per-incident progress and state, enabling the UI to display live updates for each incident as it is processed. This design keeps the UI responsive and decouples job progress from the main database.
 
 ## 🎨 UI Features
 
