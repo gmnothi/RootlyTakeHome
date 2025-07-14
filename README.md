@@ -120,7 +120,6 @@ The application comes with a sample incident transcript (`rootly_takehome_transc
 
 - **Real-time Updates**: Suggestions appear as the transcript is processed
 - **Priority-based Styling**: Different colors for high/medium/low priority suggestions
-- **Audio Controls**: Play audio for high-priority suggestions
 - **Statistics Dashboard**: Live counts of suggestion types and priorities
 - **Progress Tracking**: Visual progress bar for replay simulation
 
@@ -135,7 +134,7 @@ You'll need to obtain API keys for:
 
 ### Model Configuration
 
-- **GPT-3.5-turbo**: Used for cost-effective but capable AI analysis
+- **GPT-4.0-mini**: Used for cost-effective but capable AI analysis
 - **Temperature**: 0.3 for consistent, focused responses
 - **Max Tokens**: 500 for reasonable suggestion length
 
@@ -176,6 +175,8 @@ With more time, I would add:
 6. **Integration APIs**: Connect with other incident management tools
 7. **Custom Voices**: Allow users to choose different ElevenLabs voices
 8. **Transcript Upload**: Support for different transcript formats
+9. **Automatic Integrations:** Integrate with calendar apps (Google Calendar, Outlook) to automatically schedule follow-ups or post-mortems, and with Slack for real-time incident notifications and action item assignments—mirroring Rootly's core value.
+10. **Better Timeline Streaming:** Implement smooth, real-time streaming of timeline events with animations and live updates, making the replay experience even more immersive and intuitive.
 
 ## ⏱️ Time Spent
 
@@ -187,13 +188,6 @@ With more time, I would add:
 
 **Total**: ~11 hours
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
 
 ## 📄 License
 
