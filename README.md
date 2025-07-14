@@ -35,7 +35,6 @@ An AI-powered incident management tool that analyzes incident meeting transcript
 - **Sidekiq** - Background job processing
 - **Hotwire** - Real-time UI updates
 - **OpenAI GPT-4.0-mini** - AI suggestion generation
-- **ElevenLabs** - Text-to-speech for audio alerts
 - **Bootstrap 5** - UI framework
 
 ## 📋 Prerequisites
@@ -65,8 +64,6 @@ Create a `.env` file in the root directory:
 # OpenAI API Configuration
 OPENAI_API_KEY=your_openai_api_key_here
 
-# ElevenLabs API Configuration
-ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
 
 # Database Configuration
 DATABASE_URL=postgresql://localhost/rootly_incident_assistant_development
@@ -149,7 +146,6 @@ The application comes with a sample incident transcript (`rootly_takehome_transc
 You'll need to obtain API keys for:
 
 1. **OpenAI**: Get from [OpenAI Platform](https://platform.openai.com/)
-2. **ElevenLabs**: Get from [ElevenLabs](https://elevenlabs.io/)
 
 ### Model Configuration
 
