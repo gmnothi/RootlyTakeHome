@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  content: MyText
+  suggestion_type: MyString
+  confidence: 9.99
+  priority: MyString
+  audio_data: MyText
+
+two:
+  content: MyText
+  suggestion_type: MyString
+  confidence: 9.99
+  priority: MyString
+  audio_data: MyText

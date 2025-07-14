@@ -1,0 +1,104 @@
+<div class="toggle-container">
+  <%= link_to 'Switch to Replay View', replay_incidents_path, class: 'toggle-btn' %>
+</div>
+
+<!-- Real-Time Suggestions Horizontal Bar -->
+<div class="realtime-suggestions-bar">
+  <div class="realtime-suggestions-scroll">
+    <% @suggestions.last(20).reverse.each do |suggestion| %>
+      <div class="realtime-suggestion-card timeline-suggestion-<%= suggestion.suggestion_type %> timeline-priority-<%= suggestion.priority %>">
+        <span class="realtime-suggestion-type"><%= suggestion.suggestion_type.titleize %></span>
+        <span class="realtime-suggestion-content"><%= suggestion.content %></span>
+        <% if suggestion.priority.present? %>
+          <span class="timeline-priority timeline-priority-<%= suggestion.priority %>"><%= suggestion.priority.titleize %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="timeline-container horizontal-timeline">
+  <% @transcript.each_with_index do |message, idx| %>
+    <div class="timeline-entry clickable-message" data-message-index="<%= idx %>">
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-header">
+          <span class="timeline-speaker"><%= message['speaker'] %></span>
+          <span class="timeline-time">Message <%= idx + 1 %></span>
+        </div>
+        <div class="timeline-text"><%= message['text'] %></div>
+        <% related_suggestions = @suggestions.select { |s| s.message_index == idx } %>
+        <% if related_suggestions.any? %>
+          <div class="timeline-suggestions">
+            <% related_suggestions.each do |suggestion| %>
+              <div class="timeline-suggestion timeline-suggestion-<%= suggestion.suggestion_type %>">
+                <strong><%= suggestion.suggestion_type.titleize %>:</strong> <%= suggestion.content %>
+                <% if suggestion.priority.present? %>
+                  <span class="timeline-priority timeline-priority-<%= suggestion.priority %>"><%= suggestion.priority.titleize %></span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Modal for Suggestions -->
+<div id="suggestion-modal-overlay" class="modal-overlay" style="display:none;">
+  <div id="suggestion-modal" class="modal-content">
+    <button id="close-modal-btn" class="close-modal-btn">&times;</button>
+    <h2>Suggestions for this message</h2>
+    <div id="modal-suggestions-list"></div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const entries = document.querySelectorAll('.clickable-message');
+  const modalOverlay = document.getElementById('suggestion-modal-overlay');
+  const modal = document.getElementById('suggestion-modal');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+  const modalSuggestionsList = document.getElementById('modal-suggestions-list');
+
+  // Gather all suggestions from a JS variable for fast access
+  const allSuggestions = [
+    <% @suggestions.each do |s| %>
+      {
+        message_index: <%= s.message_index %>,
+        type: "<%= s.suggestion_type %>",
+        content: "<%= j s.content %>",
+        priority: "<%= s.priority %>"
+      },
+    <% end %>
+  ];
+
+  entries.forEach(entry => {
+    entry.addEventListener('click', function() {
+      const idx = parseInt(entry.getAttribute('data-message-index'));
+      const suggestions = allSuggestions.filter(s => s.message_index === idx);
+      if (suggestions.length === 0) {
+        modalSuggestionsList.innerHTML = '<div class="no-suggestions">No suggestions for this message.</div>';
+      } else {
+        modalSuggestionsList.innerHTML = suggestions.map(s => `
+          <div class="timeline-suggestion timeline-suggestion-${s.type} timeline-priority-${s.priority}">
+            <strong>${s.type.replace('_', ' ').toUpperCase()}:</strong> ${s.content}
+            <span class="timeline-priority timeline-priority-${s.priority}">${s.priority.toUpperCase()}</span>
+          </div>
+        `).join('');
+      }
+      modalOverlay.style.display = 'flex';
+    });
+  });
+
+  closeModalBtn.addEventListener('click', function() {
+    modalOverlay.style.display = 'none';
+  });
+  modalOverlay.addEventListener('click', function(e) {
+    if (e.target === modalOverlay) {
+      modalOverlay.style.display = 'none';
+    }
+  });
+});
+</script> 

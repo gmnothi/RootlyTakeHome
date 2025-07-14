@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Incident Replay - Rootly Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="<%= form_authenticity_token %>">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --deep-black: #000000;
+      --dark-bg: #0a0a0a;
+      --dark-surface: #111111;
+      --dark-surface-2: #1a1a1a;
+      --dark-surface-3: #222222;
+      --dark-text: #ffffff;
+      --dark-text-secondary: #888888;
+      --accent-primary: #00d4ff;
+      --accent-secondary: #0099cc;
+      --success-color: #00ff88;
+      --warning-color: #ffaa00;
+      --danger-color: #ff4444;
+      --info-color: #00aaff;
+      --border-color: #333333;
+    }
+    
+    body {
+      background: var(--deep-black);
+      color: var(--dark-text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container-fluid {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .replay-controls {
+      background: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-surface-2) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+    }
+    
+    .card {
+      background: var(--dark-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      color: var(--dark-text);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    .card-header {
+      background: var(--dark-surface-2) !important;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    .suggestion-card {
+      background: var(--dark-surface-2);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border-left: 4px solid var(--accent-primary);
+      margin-bottom: 1rem;
+    }
+    
+    .suggestion-card.high-priority {
+      border-left-color: var(--danger-color);
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, rgba(255, 68, 68, 0.05) 100%);
+    }
+    
+    .suggestion-card.medium-priority {
+      border-left-color: var(--warning-color);
+      background: linear-gradient(135deg, rgba(255, 170, 0, 0.1) 0%, rgba(255, 170, 0, 0.05) 100%);
+    }
+    
+    .suggestion-card.low-priority {
+      border-left-color: var(--info-color);
+      background: linear-gradient(135deg, rgba(0, 170, 255, 0.1) 0%, rgba(0, 170, 255, 0.05) 100%);
+    }
+    
+    .suggestion-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      border-color: var(--accent-primary);
+    }
+    
+    .progress-bar-custom {
+      height: 8px;
+      border-radius: 6px;
+      background: var(--dark-surface-3);
+      overflow: hidden;
+    }
+    
+    .progress-bar-custom .progress-bar {
+      background: linear-gradient(90deg, var(--success-color), var(--accent-primary));
+      border-radius: 6px;
+      transition: width 0.3s ease;
+    }
+    
+    .speaker-badge {
+      font-size: 0.75rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .suggestion-type-icon {
+      font-size: 1.1rem;
+      margin-right: 8px;
+    }
+    
+    .audio-control {
+      cursor: pointer;
+      color: var(--accent-primary);
+      transition: color 0.2s;
+      padding: 8px;
+      border-radius: 6px;
+    }
+    
+    .audio-control:hover {
+      color: var(--accent-secondary);
+      background: rgba(0, 212, 255, 0.1);
+    }
+    
+    .replay-status {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+    
+    .btn {
+      border-radius: 8px;
+      font-weight: 600;
+      padding: 12px 24px;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .btn-light {
+      background: var(--dark-surface-2);
+      border: 1px solid var(--border-color);
+      color: var(--dark-text);
+    }
+    
+    .btn-light:hover {
+      background: var(--dark-surface-3);
+      color: var(--dark-text);
+      transform: translateY(-1px);
+    }
+    
+    .btn-outline-light {
+      border-color: var(--border-color);
+      color: var(--dark-text);
+      background: transparent;
+    }
+    
+    .btn-outline-light:hover {
+      background: var(--dark-surface-2);
+      color: var(--dark-text);
+      transform: translateY(-1px);
+    }
+    
+    .btn-outline-danger {
+      border-color: var(--danger-color);
+      color: var(--danger-color);
+      background: transparent;
+    }
+    
+    .btn-outline-danger:hover {
+      background: var(--danger-color);
+      color: var(--dark-text);
+      transform: translateY(-1px);
+    }
+    
+    .btn-danger {
+      background: var(--danger-color);
+      color: var(--dark-text);
+    }
+    
+    .btn-danger:hover {
+      background: #ff6666;
+      transform: translateY(-1px);
+    }
+    
+    .form-select, .form-control {
+      background: var(--dark-surface-2);
+      border: 1px solid var(--border-color);
+      color: var(--dark-text);
+      border-radius: 6px;
+    }
+    
+    .form-select:focus, .form-control:focus {
+      background: var(--dark-surface-3);
+      border-color: var(--accent-primary);
+      color: var(--dark-text);
+      box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+    }
+    
+    .bg-light {
+      background: var(--dark-surface-2) !important;
+    }
+    
+    .text-muted {
+      color: var(--dark-text-secondary) !important;
+    }
+    
+    .assigned-to {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      background: var(--accent-primary);
+      color: var(--deep-black);
+      font-weight: 600;
+    }
+    
+    .bg-primary { background-color: var(--accent-primary) !important; }
+    .bg-success { background-color: var(--success-color) !important; }
+    .bg-warning { background-color: var(--warning-color) !important; }
+    .bg-danger { background-color: var(--danger-color) !important; }
+    .bg-info { background-color: var(--info-color) !important; }
+    .bg-secondary { background-color: var(--dark-surface-3) !important; }
+    
+    .text-primary { color: var(--accent-primary) !important; }
+    .text-success { color: var(--success-color) !important; }
+    .text-warning { color: var(--warning-color) !important; }
+    .text-danger { color: var(--danger-color) !important; }
+    .text-info { color: var(--info-color) !important; }
+    
+    .new-message {
+      animation: highlightNew 3s ease-out;
+    }
+    
+    @keyframes highlightNew {
+      0% {
+        background-color: rgba(0, 212, 255, 0.2);
+        border-left: 4px solid var(--accent-primary);
+      }
+      100% {
+        background-color: transparent;
+        border-left: none;
+      }
+    }
+    
+    .transcript-message {
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    
+    .transcript-message:hover {
+      background-color: rgba(0, 212, 255, 0.05);
+    }
+    
+    .badge {
+      border-radius: 6px;
+      font-weight: 600;
+      padding: 6px 12px;
+    }
+    
+    .h3, .h4, .h5, .h6 {
+      font-weight: 700;
+    }
+    
+    .h4 {
+      font-size: 1.5rem;
+    }
+    
+    .h5 {
+      font-size: 1.25rem;
+    }
+    
+    .h6 {
+      font-size: 1rem;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--dark-surface-2);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--dark-text-secondary);
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container-fluid {
+        padding: 1rem;
+      }
+      
+      .replay-controls {
+        padding: 1.5rem;
+      }
+      
+      .card-header {
+        padding: 1rem;
+      }
+      
+      .card-body {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="replay-controls">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h4 class="mb-3">
+            <i class="fas fa-play-circle me-3 text-primary"></i>
+            Incident Replay
+          </h4>
+          <p class="mb-0 replay-status">
+            <span id="processingIndicator" class="me-2" style="display: none;">
+              <i class="fas fa-spinner fa-spin text-success"></i>
+            </span>
+            Processing transcript at 10x speed • <%= @transcript_length %> messages
+          </p>
+        </div>
+        <div class="col-md-6 text-end">
+          <button id="startReplay" class="btn btn-light btn-lg me-3">
+            <i class="fas fa-play me-2"></i> Start Replay
+          </button>
+          <button id="pauseReplay" class="btn btn-outline-light btn-lg me-3" disabled>
+            <i class="fas fa-pause me-2"></i> Pause
+          </button>
+          <button id="clearAll" class="btn btn-outline-danger btn-lg">
+            <i class="fas fa-trash me-2"></i> Clear All
+          </button>
+        </div>
+      </div>
+      
+      <div class="mt-4">
+        <div class="progress progress-bar-custom">
+          <div class="progress-bar" role="progressbar" style="width: 0%" id="replayProgress"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toggle-container">
+      <%= link_to 'Switch to Timeline View', timeline_incidents_path, class: 'toggle-btn' %>
+    </div>
+
+    <div class="row g-4">
+      <!-- Main Content Area -->
+      <div class="col-lg-8">
+        <!-- Live Transcript -->
+        <div class="card mb-4">
+          <div class="card-header bg-success text-dark">
+            <h5 class="mb-0">
+              <i class="fas fa-comments me-3"></i>
+              Live Transcript
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            <div id="transcriptContainer" class="p-4" style="max-height: 400px; overflow-y: auto;">
+              <div class="text-center text-muted py-5">
+                <i class="fas fa-microphone fa-3x mb-4 text-muted"></i>
+                <p class="mb-0">Transcript will appear here as the replay progresses</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggestions Timeline -->
+        <div class="card">
+          <div class="card-header bg-primary text-dark">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">
+                <i class="fas fa-lightbulb me-3"></i>
+                Real-Time Suggestions
+              </h5>
+              <div class="d-flex gap-3">
+                <select id="typeFilter" class="form-select form-select-sm" style="width: auto;">
+                  <option value="">All Types</option>
+                  <option value="action_item">📋 Action Items</option>
+                  <option value="trigger_event">⚡ Trigger Events</option>
+                  <option value="root_cause">🔍 Root Causes</option>
+                  <option value="metadata">🏷️ Metadata</option>
+                </select>
+                <select id="priorityFilter" class="form-select form-select-sm" style="width: auto;">
+                  <option value="">All Priorities</option>
+                  <option value="high">🔴 High</option>
+                  <option value="medium">🟡 Medium</option>
+                  <option value="low">🔵 Low</option>
+                </select>
+                <select id="participantFilter" class="form-select form-select-sm" style="width: auto;">
+                  <option value="">All Participants</option>
+                  <option value="frank">👤 frank</option>
+                  <option value="erin">👤 erin</option>
+                  <option value="carol">👤 carol</option>
+                  <option value="bob">👤 bob</option>
+                  <option value="alice">👤 alice</option>
+                  <option value="dan">👤 dan</option>
+                </select>
+                <input type="text" id="searchFilter" class="form-control form-control-sm" placeholder="Search..." style="width: 180px;">
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <div id="suggestionsContainer" class="p-4">
+              <div class="text-center text-muted py-5">
+                <i class="fas fa-clock fa-3x mb-4 text-muted"></i>
+                <p class="mb-0">Click "Start Replay" to begin processing the incident transcript</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        <!-- Incident Stats -->
+        <div class="card mb-4">
+          <div class="card-header bg-info text-dark">
+            <h5 class="mb-0">
+              <i class="fas fa-chart-line me-3"></i>
+              Incident Stats
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row text-center mb-4">
+              <div class="col-6">
+                <div class="border-end">
+                  <h3 id="totalSuggestions" class="text-primary mb-1">0</h3>
+                  <small class="text-muted">Suggestions</small>
+                </div>
+              </div>
+              <div class="col-6">
+                <h3 id="highPriorityCount" class="text-danger mb-1">0</h3>
+                <small class="text-muted">High Priority</small>
+              </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <h6 class="text-muted mb-3">Suggestion Types</h6>
+            <div class="mb-3">
+              <span class="badge bg-primary me-2">📋 Action Items</span>
+              <span id="actionItemCount" class="badge bg-secondary">0</span>
+            </div>
+            <div class="mb-3">
+              <span class="badge bg-warning me-2">⚡ Trigger Events</span>
+              <span id="triggerEventCount" class="badge bg-secondary">0</span>
+            </div>
+            <div class="mb-3">
+              <span class="badge bg-info me-2">🔍 Root Causes</span>
+              <span id="rootCauseCount" class="badge bg-secondary">0</span>
+            </div>
+            <div class="mb-3">
+              <span class="badge bg-success me-2">🏷️ Metadata</span>
+              <span id="metadataCount" class="badge bg-secondary">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Incident Participants -->
+        <div class="card">
+          <div class="card-header bg-secondary text-dark">
+            <h5 class="mb-0 incident-participants-heading">
+              <i class="fas fa-users me-3"></i>
+              Incident Participants
+            </h5>
+          </div>
+          <div class="card-body">
+            <% unique_participants = @transcript.map { |m| m['speaker'] }.uniq %>
+            <div class="d-flex flex-wrap gap-2">
+              <% unique_participants.each do |participant| %>
+                <span class="speaker-badge <%= get_speaker_class(participant, unique_participants) %>"><%= participant %></span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message Details Modal -->
+      <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content" style="background: var(--dark-surface); border: 1px solid var(--border-color);">
+            <div class="modal-header" style="background: var(--dark-surface-2); border-bottom: 1px solid var(--border-color);">
+              <h5 class="modal-title text-light" id="messageModalLabel">
+                <i class="fas fa-comment me-2"></i>
+                Message Details
+              </h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-4">
+                <h6 class="text-muted mb-2">Original Message</h6>
+                <div id="modalMessageContent" class="p-3 rounded" style="background: var(--dark-surface-2); border: 1px solid var(--border-color);">
+                  <!-- Message content will be inserted here -->
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <h6 class="text-muted mb-3">Associated Suggestions</h6>
+                <div id="modalSuggestions" class="row">
+                  <!-- Suggestions will be inserted here -->
+                </div>
+                <div id="modalNoSuggestions" class="text-center text-muted py-4" style="display: none;">
+                  <i class="fas fa-info-circle fa-2x mb-3"></i>
+                  <p>No suggestions were generated for this message</p>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer" style="background: var(--dark-surface-2); border-top: 1px solid var(--border-color);">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let replayActive = false;
+    let currentProgress = 0;
+    let suggestionCounts = {
+      total: 0,
+      highPriority: 0,
+      actionItems: 0,
+      triggerEvents: 0,
+      rootCauses: 0,
+      metadata: 0
+    };
+    
+    // Filter variables
+    let allSuggestions = [];
+    let currentFilters = {
+      type: '',
+      priority: '',
+      participant: '',
+      search: ''
+    };
+
+    document.getElementById('startReplay').addEventListener('click', function() {
+      startReplay();
+    });
+
+    document.getElementById('pauseReplay').addEventListener('click', function() {
+      pauseReplay();
+    });
+
+    document.getElementById('clearAll').addEventListener('click', function() {
+      clearAll();
+    });
+
+    // Filter event listeners
+    document.getElementById('typeFilter').addEventListener('change', function() {
+      currentFilters.type = this.value;
+      applyFilters();
+    });
+
+    document.getElementById('priorityFilter').addEventListener('change', function() {
+      currentFilters.priority = this.value;
+      applyFilters();
+    });
+
+    document.getElementById('participantFilter').addEventListener('change', function() {
+      currentFilters.participant = this.value;
+      applyFilters();
+    });
+
+    document.getElementById('searchFilter').addEventListener('input', function() {
+      currentFilters.search = this.value.toLowerCase();
+      applyFilters();
+    });
+
+    function startReplay() {
+      replayActive = true;
+      const startButton = document.getElementById('startReplay');
+      const pauseButton = document.getElementById('pauseReplay');
+      const processingIndicator = document.getElementById('processingIndicator');
+      
+      if (startButton) startButton.disabled = true;
+      if (pauseButton) pauseButton.disabled = false;
+      if (processingIndicator) processingIndicator.style.display = 'inline';
+      
+      // Start the background job
+      fetch('/incidents/start_replay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Replay started:', data);
+        // Start polling for suggestions
+        pollSuggestions();
+        // Simulate progress
+        simulateProgress();
+      })
+      .catch(error => {
+        console.error('Error starting replay:', error);
+        alert('Error starting replay. Check console for details.');
+      });
+    }
+
+    function pauseReplay() {
+      replayActive = false;
+      const startButton = document.getElementById('startReplay');
+      const pauseButton = document.getElementById('pauseReplay');
+      const processingIndicator = document.getElementById('processingIndicator');
+      
+      if (startButton) startButton.disabled = false;
+      if (pauseButton) pauseButton.disabled = true;
+      if (processingIndicator) processingIndicator.style.display = 'none';
+      
+      // Update button text
+      if (pauseButton) {
+        pauseButton.innerHTML = '<i class="fas fa-play me-2"></i> Resume';
+        pauseButton.onclick = resumeReplay;
+      }
+      
+      // Call the pause endpoint
+      fetch('/incidents/pause_replay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Replay paused:', data);
+      })
+      .catch(error => {
+        console.error('Error pausing replay:', error);
+      });
+    }
+
+    function resumeReplay() {
+      replayActive = true;
+      const startButton = document.getElementById('startReplay');
+      const pauseButton = document.getElementById('pauseReplay');
+      const processingIndicator = document.getElementById('processingIndicator');
+      
+      if (startButton) startButton.disabled = true;
+      if (pauseButton) pauseButton.disabled = false;
+      if (processingIndicator) processingIndicator.style.display = 'inline';
+      
+      // Update button text back
+      if (pauseButton) {
+        pauseButton.innerHTML = '<i class="fas fa-pause me-2"></i> Pause';
+        pauseButton.onclick = pauseReplay;
+      }
+      
+      // Call the resume endpoint
+      fetch('/incidents/resume_replay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Replay resumed:', data);
+        // Resume polling
+        pollSuggestions();
+      })
+      .catch(error => {
+        console.error('Error resuming replay:', error);
+      });
+    }
+
+    function simulateProgress() {
+      if (!replayActive) return;
+      
+      currentProgress += 1;
+      document.getElementById('replayProgress').style.width = currentProgress + '%';
+      
+      if (currentProgress < 100) {
+        setTimeout(simulateProgress, 600); // 1 minute total / 100 steps
+      }
+    }
+
+    function pollSuggestions() {
+      if (!replayActive) return;
+      
+      fetch('/incidents/suggestions')
+        .then(response => response.json())
+        .then(suggestions => {
+          updateSuggestionsDisplay(suggestions);
+          updateStats(suggestions);
+          updateClearButtonVisibility(); // Update button visibility after suggestions are updated
+        })
+        .catch(error => console.error('Error polling suggestions:', error));
+      
+      // Also poll for transcript updates
+      fetch('/incidents/transcript')
+        .then(response => response.json())
+        .then(transcript => {
+          updateTranscriptDisplay(transcript);
+        })
+        .catch(error => console.error('Error polling transcript:', error));
+      
+      setTimeout(pollSuggestions, 500); // Poll every 0.5 seconds for more responsive updates
+    }
+
+    function updateSuggestionsDisplay(suggestions) {
+      const container = document.getElementById('suggestionsContainer');
+      
+      if (suggestions.length === 0 || !container) return;
+      
+      // Store all suggestions for filtering
+      allSuggestions = suggestions;
+      
+      // Apply current filters and display
+      applyFilters();
+    }
+
+    function createSuggestionCard(suggestion) {
+      const card = document.createElement('div');
+      card.className = `card mb-3 suggestion-card ${suggestion.priority}-priority`;
+      
+      const typeIcon = getTypeIcon(suggestion.suggestion_type);
+      const priorityClass = getPriorityClass(suggestion.priority);
+      const assignedTo = getAssignedParticipant(suggestion);
+      
+      card.innerHTML = `
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <div class="d-flex align-items-center mb-2">
+                <span class="suggestion-type-icon">${typeIcon}</span>
+                <span class="badge ${priorityClass} me-2">${suggestion.priority.toUpperCase()}</span>
+                <small class="text-muted">${suggestion.suggestion_type.replace('_', ' ').toUpperCase()}</small>
+                ${assignedTo ? `<span class="assigned-to ms-2">👤 ${assignedTo}</span>` : ''}
+              </div>
+              <p class="card-text mb-2">${suggestion.content}</p>
+              <small class="text-muted">
+                Confidence: ${Math.round(suggestion.confidence * 100)}%
+              </small>
+            </div>
+            ${suggestion.audio_data ? `
+              <div class="audio-control ms-2" onclick="playAudio('${suggestion.id}')">
+                <i class="fas fa-volume-up"></i>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+      
+      return card;
+    }
+
+    function getTypeIcon(type) {
+      const icons = {
+        'action_item': '📋',
+        'trigger_event': '⚡',
+        'root_cause': '🔍',
+        'metadata': '🏷️'
+      };
+      return icons[type] || '💡';
+    }
+
+    function getPriorityClass(priority) {
+      const classes = {
+        'high': 'bg-danger',
+        'medium': 'bg-warning',
+        'low': 'bg-info'
+      };
+      return classes[priority] || 'bg-secondary';
+    }
+
+    function updateStats(suggestions) {
+      suggestionCounts.total = suggestions.length;
+      suggestionCounts.highPriority = suggestions.filter(s => s.priority === 'high').length;
+      suggestionCounts.actionItems = suggestions.filter(s => s.suggestion_type === 'action_item').length;
+      suggestionCounts.triggerEvents = suggestions.filter(s => s.suggestion_type === 'trigger_event').length;
+      suggestionCounts.rootCauses = suggestions.filter(s => s.suggestion_type === 'root_cause').length;
+      suggestionCounts.metadata = suggestions.filter(s => s.suggestion_type === 'metadata').length;
+      
+      const totalSuggestions = document.getElementById('totalSuggestions');
+      const highPriorityCount = document.getElementById('highPriorityCount');
+      const actionItemCount = document.getElementById('actionItemCount');
+      const triggerEventCount = document.getElementById('triggerEventCount');
+      const rootCauseCount = document.getElementById('rootCauseCount');
+      const metadataCount = document.getElementById('metadataCount');
+      
+      if (totalSuggestions) totalSuggestions.textContent = suggestionCounts.total;
+      if (highPriorityCount) highPriorityCount.textContent = suggestionCounts.highPriority;
+      if (actionItemCount) actionItemCount.textContent = suggestionCounts.actionItems;
+      if (triggerEventCount) triggerEventCount.textContent = suggestionCounts.triggerEvents;
+      if (rootCauseCount) rootCauseCount.textContent = suggestionCounts.rootCauses;
+      if (metadataCount) metadataCount.textContent = suggestionCounts.metadata;
+    }
+
+    function updateTranscriptDisplay(transcript) {
+      const container = document.getElementById('transcriptContainer');
+      
+      if (!transcript || !transcript.messages || transcript.messages.length === 0 || !container) return;
+      
+      // Clear loading message if it exists
+      if (container.querySelector('.text-center')) {
+        container.innerHTML = '';
+      }
+      
+      // Add new messages
+      transcript.messages.forEach(message => {
+        if (!container.querySelector(`[data-message-id="${message.id}"]`)) {
+          const messageElement = createTranscriptMessage(message);
+          container.appendChild(messageElement);
+          
+          // Highlight new messages
+          if (message.is_new) {
+            messageElement.classList.add('new-message');
+            setTimeout(() => {
+              messageElement.classList.remove('new-message');
+            }, 3000);
+          }
+          
+          container.scrollTop = container.scrollHeight; // Auto-scroll to bottom
+        }
+      });
+      
+      // Update progress if available
+      if (transcript.progress) {
+        const percentage = (transcript.progress.current / transcript.progress.total * 100).toFixed(1);
+        const replayProgress = document.getElementById('replayProgress');
+        if (replayProgress) replayProgress.style.width = percentage + '%';
+        
+        // Update status text
+        const statusElement = document.querySelector('.replay-status');
+        if (statusElement) {
+          statusElement.textContent = `Processing transcript at 10x speed • ${transcript.progress.current}/${transcript.progress.total} messages (${percentage}%)`;
+        }
+      }
+      
+      updateClearButtonVisibility(); // Update button visibility after transcript is updated
+    }
+
+    function createTranscriptMessage(message) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'mb-3 transcript-message';
+      messageDiv.setAttribute('data-message-id', message.id);
+      messageDiv.setAttribute('data-message-index', message.id - 1);
+      messageDiv.style.cursor = 'pointer';
+      
+      const speakerClass = getSpeakerClass(message.speaker);
+      const timestamp = message.processed_at ? new Date(message.processed_at).toLocaleTimeString() : new Date().toLocaleTimeString();
+      
+      messageDiv.innerHTML = `
+        <div class="d-flex align-items-start">
+          <div class="flex-shrink-0 me-3">
+            <span class="speaker-badge ${speakerClass}">${message.speaker}</span>
+          </div>
+          <div class="flex-grow-1">
+            <div class="bg-light p-3 rounded" style="border: 1px solid var(--border-color);">
+              <p class="mb-1">${message.text}</p>
+              <small class="text-muted">${timestamp}</small>
+              <div class="mt-2">
+                <small class="text-primary">
+                  <i class="fas fa-lightbulb me-1"></i>
+                  Click to view associated suggestions
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Add click handler to show modal
+      messageDiv.addEventListener('click', function() {
+        showMessageDetails(message);
+      });
+      
+      // Add fade-in animation
+      messageDiv.style.opacity = '0';
+      messageDiv.style.transform = 'translateY(10px)';
+      messageDiv.style.transition = 'all 0.3s ease';
+      
+      setTimeout(() => {
+        messageDiv.style.opacity = '1';
+        messageDiv.style.transform = 'translateY(0)';
+      }, 100);
+      
+      return messageDiv;
+    }
+
+    function showMessageDetails(message) {
+      // Find suggestions associated with this message
+      const messageIndex = message.id - 1;
+      const associatedSuggestions = allSuggestions.filter(suggestion => {
+        // Use the message_index stored in the database for proper association
+        return suggestion.message_index === messageIndex;
+      });
+      
+      // Update modal content
+      const modalMessageContent = document.getElementById('modalMessageContent');
+      const modalSuggestions = document.getElementById('modalSuggestions');
+      const modalNoSuggestions = document.getElementById('modalNoSuggestions');
+      
+      if (modalMessageContent) {
+        modalMessageContent.innerHTML = `
+          <div class="d-flex align-items-start">
+            <div class="flex-shrink-0 me-3">
+              <span class="speaker-badge ${getSpeakerClass(message.speaker)}">${message.speaker}</span>
+            </div>
+            <div class="flex-grow-1">
+              <p class="mb-1">${message.text}</p>
+              <small class="text-muted">${message.processed_at ? new Date(message.processed_at).toLocaleTimeString() : new Date().toLocaleTimeString()}</small>
+            </div>
+          </div>
+        `;
+      }
+      
+      if (associatedSuggestions.length > 0) {
+        modalSuggestions.innerHTML = '';
+        modalNoSuggestions.style.display = 'none';
+        
+        associatedSuggestions.forEach(suggestion => {
+          const suggestionCard = createSuggestionCard(suggestion);
+          const colDiv = document.createElement('div');
+          colDiv.className = 'col-md-6 mb-3';
+          colDiv.appendChild(suggestionCard);
+          modalSuggestions.appendChild(colDiv);
+        });
+      } else {
+        modalSuggestions.innerHTML = '';
+        modalNoSuggestions.style.display = 'block';
+      }
+      
+      // Show the modal
+      const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+      modal.show();
+    }
+
+    function getSpeakerClass(speaker) {
+      const classes = {
+        'frank': 'bg-primary',
+        'erin': 'bg-success', 
+        'carol': 'bg-warning',
+        'bob': 'bg-info',
+        'alice': 'bg-danger',
+        'dan': 'bg-secondary'
+      };
+      return classes[speaker.toLowerCase()] || 'bg-secondary';
+    }
+
+    function playAudio(suggestionId) {
+      // This would integrate with the ElevenLabs audio data
+      console.log('Playing audio for suggestion:', suggestionId);
+    }
+
+    function getAssignedParticipant(suggestion) {
+      // Personalize action items based on content and participants
+      if (suggestion.suggestion_type === 'action_item') {
+        const content = suggestion.content.toLowerCase();
+        
+        // Assign based on content keywords
+        if (content.includes('severity') || content.includes('sev-') || content.includes('bump')) {
+          return 'frank'; // Incident commander
+        } else if (content.includes('cloudflare') || content.includes('cdn') || content.includes('edge')) {
+          return 'carol'; // Infrastructure
+        } else if (content.includes('database') || content.includes('db') || content.includes('query')) {
+          return 'bob'; // Database
+        } else if (content.includes('monitoring') || content.includes('alert') || content.includes('metrics')) {
+          return 'alice'; // Monitoring
+        } else if (content.includes('communication') || content.includes('status') || content.includes('update')) {
+          return 'erin'; // Communications
+        } else if (content.includes('document') || content.includes('post-mortem') || content.includes('review')) {
+          return 'dan'; // Documentation
+        }
+      }
+      
+      return null;
+    }
+
+    function updateClearButtonVisibility() {
+      const clearButton = document.getElementById('clearAll');
+      const hasSuggestions = document.querySelectorAll('.suggestion-card').length > 0;
+      const hasTranscript = document.querySelectorAll('.transcript-message').length > 0;
+      
+      if (clearButton) {
+        if (hasSuggestions || hasTranscript) {
+          clearButton.classList.remove('btn-outline-danger');
+          clearButton.classList.add('btn-danger');
+          clearButton.innerHTML = '<i class="fas fa-trash me-2"></i> Clear All';
+        } else {
+          clearButton.classList.remove('btn-danger');
+          clearButton.classList.add('btn-outline-danger');
+          clearButton.innerHTML = '<i class="fas fa-trash me-2"></i> Clear All';
+        }
+      }
+    }
+
+    function clearAll() {
+      // Stop any active replay first
+      if (replayActive) {
+        replayActive = false;
+        const startButton = document.getElementById('startReplay');
+        const pauseButton = document.getElementById('pauseReplay');
+        const processingIndicator = document.getElementById('processingIndicator');
+        if (startButton) startButton.disabled = false;
+        if (pauseButton) pauseButton.disabled = true;
+        if (processingIndicator) processingIndicator.style.display = 'none';
+      }
+      
+      // Show loading state
+      const clearButton = document.getElementById('clearAll');
+      const originalText = clearButton ? clearButton.innerHTML : '';
+      if (clearButton) {
+        clearButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Clearing...';
+        clearButton.disabled = true;
+      }
+      
+      fetch('/incidents/clear_all', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('All data cleared:', data);
+        
+        // Reset UI state
+        const transcriptContainer = document.getElementById('transcriptContainer');
+        if (transcriptContainer) {
+          transcriptContainer.innerHTML = `
+            <div class="text-center text-muted py-5">
+              <i class="fas fa-microphone fa-3x mb-4 text-muted"></i>
+              <p class="mb-0">Transcript will appear here as the replay progresses</p>
+            </div>
+          `;
+        }
+        
+        const suggestionsContainer = document.getElementById('suggestionsContainer');
+        if (suggestionsContainer) {
+          suggestionsContainer.innerHTML = `
+            <div class="text-center text-muted py-5">
+              <i class="fas fa-clock fa-3x mb-4 text-muted"></i>
+              <p class="mb-0">Click "Start Replay" to begin processing the incident transcript</p>
+            </div>
+          `;
+        }
+        
+        // Reset filters
+        allSuggestions = [];
+        currentFilters = {
+          type: '',
+          priority: '',
+          participant: '',
+          search: ''
+        };
+        
+        // Reset filter controls
+        const typeFilter = document.getElementById('typeFilter');
+        const priorityFilter = document.getElementById('priorityFilter');
+        const participantFilter = document.getElementById('participantFilter');
+        const searchFilter = document.getElementById('searchFilter');
+        
+        if (typeFilter) typeFilter.value = '';
+        if (priorityFilter) priorityFilter.value = '';
+        if (participantFilter) participantFilter.value = '';
+        if (searchFilter) searchFilter.value = '';
+        
+        // Reset progress bar
+        const replayProgress = document.getElementById('replayProgress');
+        if (replayProgress) replayProgress.style.width = '0%';
+        
+        // Reset counters
+        document.getElementById('totalSuggestions').textContent = '0';
+        document.getElementById('highPriorityCount').textContent = '0';
+        document.getElementById('actionItemCount').textContent = '0';
+        document.getElementById('triggerEventCount').textContent = '0';
+        document.getElementById('rootCauseCount').textContent = '0';
+        document.getElementById('metadataCount').textContent = '0';
+        
+        // Reset status
+        const statusElement = document.querySelector('.replay-status');
+        if (statusElement) {
+          statusElement.textContent = `Processing transcript at 10x speed • <%= @transcript_length %> messages`;
+        }
+        
+        // Reset button
+        if (clearButton) {
+          clearButton.innerHTML = originalText;
+          clearButton.disabled = false;
+        }
+      })
+      .catch(error => {
+        console.error('Error clearing all data:', error);
+        
+        // Reset button on error
+        if (clearButton) {
+          clearButton.innerHTML = originalText;
+          clearButton.disabled = false;
+        }
+      });
+    }
+
+    function applyFilters() {
+      const container = document.getElementById('suggestionsContainer');
+      if (!container) return;
+      
+      // Clear container
+      container.innerHTML = '';
+      
+      if (allSuggestions.length === 0) {
+        container.innerHTML = `
+          <div class="text-center text-muted py-5">
+            <i class="fas fa-clock fa-3x mb-4 text-muted"></i>
+            <p class="mb-0">Click "Start Replay" to begin processing the incident transcript</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Filter suggestions based on current filters
+      let filteredSuggestions = allSuggestions.filter(suggestion => {
+        // Type filter
+        if (currentFilters.type && suggestion.suggestion_type !== currentFilters.type) {
+          return false;
+        }
+        
+        // Priority filter
+        if (currentFilters.priority && suggestion.priority !== currentFilters.priority) {
+          return false;
+        }
+        
+        // Participant filter
+        if (currentFilters.participant) {
+          const assignedTo = getAssignedParticipant(suggestion);
+          if (!assignedTo || assignedTo !== currentFilters.participant) {
+            return false;
+          }
+        }
+        
+        // Search filter
+        if (currentFilters.search) {
+          const searchText = suggestion.content.toLowerCase();
+          if (!searchText.includes(currentFilters.search)) {
+            return false;
+          }
+        }
+        
+        return true;
+      });
+      
+      // Display filtered suggestions
+      if (filteredSuggestions.length === 0) {
+        container.innerHTML = `
+          <div class="text-center text-muted py-5">
+            <i class="fas fa-filter fa-2x mb-3"></i>
+            <p>No suggestions match the current filters</p>
+            <small>Try adjusting your filter criteria</small>
+          </div>
+        `;
+        return;
+      }
+      
+      // Add filtered suggestions to container
+      filteredSuggestions.forEach(suggestion => {
+        const card = createSuggestionCard(suggestion);
+        container.insertBefore(card, container.firstChild);
+      });
+      
+      // Update stats with filtered suggestions
+      updateStats(filteredSuggestions);
+    }
+  </script>
+</body>
+</html>
