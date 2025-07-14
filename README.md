@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="app/assets/images/bootly.png" alt="Bootly Logo" width="220" />
+</div>
+
 # Rootly Incident Assistant
 
 An AI-powered incident management tool that analyzes incident meeting transcripts in real-time and provides intelligent suggestions to incident responders.
