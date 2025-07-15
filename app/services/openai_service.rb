@@ -1,16 +1,16 @@
 class OpenaiService
   def initialize
-    @client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
+    @client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
   end
 
   def generate_suggestions(transcript_segment, context = {})
     # If no API key is set, generate mock suggestions for demo
-    if ENV['OPENAI_API_KEY'].blank? || ENV['OPENAI_API_KEY'] == 'your_openai_api_key_here'
+    if ENV["OPENAI_API_KEY"].blank? || ENV["OPENAI_API_KEY"] == "your_openai_api_key_here"
       return generate_mock_suggestions(transcript_segment, context)
     end
 
     prompt = build_suggestion_prompt(transcript_segment, context)
-    
+
     response = @client.chat(
       parameters: {
         model: "gpt-4o-mini",
@@ -41,9 +41,9 @@ class OpenaiService
   def generate_mock_suggestions(transcript_segment, context)
     # Generate realistic mock suggestions based on the transcript content
     suggestions = []
-    
+
     # Action items
-    if transcript_segment.downcase.include?('remember') || transcript_segment.downcase.include?('follow up')
+    if transcript_segment.downcase.include?("remember") || transcript_segment.downcase.include?("follow up")
       suggestions << {
         "type" => "action_item",
         "content" => "Follow up on the mentioned task",
@@ -51,9 +51,9 @@ class OpenaiService
         "priority" => "high"
       }
     end
-    
+
     # Trigger events
-    if transcript_segment.downcase.include?('resolved') || transcript_segment.downcase.include?('fixed')
+    if transcript_segment.downcase.include?("resolved") || transcript_segment.downcase.include?("fixed")
       suggestions << {
         "type" => "trigger_event",
         "content" => "Issue appears to be resolved",
@@ -61,9 +61,9 @@ class OpenaiService
         "priority" => "high"
       }
     end
-    
+
     # Root causes
-    if transcript_segment.downcase.include?('deploy') || transcript_segment.downcase.include?('deployment')
+    if transcript_segment.downcase.include?("deploy") || transcript_segment.downcase.include?("deployment")
       suggestions << {
         "type" => "root_cause",
         "content" => "Recent deployment may be related to the issue",
@@ -71,9 +71,9 @@ class OpenaiService
         "priority" => "medium"
       }
     end
-    
+
     # Metadata
-    if transcript_segment.downcase.include?('service') || transcript_segment.downcase.include?('api')
+    if transcript_segment.downcase.include?("service") || transcript_segment.downcase.include?("api")
       suggestions << {
         "type" => "metadata",
         "content" => "Service/API mentioned - should be tracked",
@@ -81,7 +81,7 @@ class OpenaiService
         "priority" => "low"
       }
     end
-    
+
     # Default suggestion if none match
     if suggestions.empty?
       suggestions << {
@@ -91,7 +91,7 @@ class OpenaiService
         "priority" => "medium"
       }
     end
-    
+
     suggestions
   end
 
@@ -138,7 +138,7 @@ class OpenaiService
 
   def extract_suggestions_from_text(text)
     suggestions = []
-    
+
     # Simple text parsing as fallback
     if text.include?("ACTION ITEM") || text.include?("action item")
       suggestions << {
@@ -151,4 +151,4 @@ class OpenaiService
 
     suggestions
   end
-end 
+end

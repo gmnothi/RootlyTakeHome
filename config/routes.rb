@@ -17,7 +17,7 @@ Rails.application.routes.draw do
       get :timeline
     end
   end
-  
+
   # Suggestions routes
   get "suggestions/index"
   get "suggestions/create"

@@ -1,0 +1,425 @@
+/*
+ * This is a manifest file that'll be compiled into application.css.
+ *
+ * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
+ * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
+ * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
+ * depending on specificity.
+ *
+ * Consider organizing styles into separate files for maintainability.
+ */
+
+body {
+  background: #0a0c10 !important;
+  color: #e6e6e6;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+}
+
+.logo-container {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.bootly-logo {
+  max-width: 320px;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.12));
+}
+
+/* Timeline View Styles */
+.timeline-container {
+  position: relative;
+  margin: 2rem auto;
+  max-width: 900px;
+  padding-left: 40px;
+  border-left: 3px solid #1a2230;
+  background: rgba(20, 24, 32, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 4px 32px #00ffe71a, 0 1.5px 8px #000a;
+}
+
+.timeline-entry {
+  position: relative;
+  margin-bottom: 2.7rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -18px;
+  top: 18px;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, #00ffe7 0%, #00bfff 100%);
+  border-radius: 50%;
+  border: 4px solid #0a0c10;
+  box-shadow: 0 0 16px #00ffe7cc, 0 0 2px #00bfff;
+}
+
+.timeline-content {
+  background: rgba(18, 22, 28, 0.98);
+  color: #e6e6e6;
+  border-radius: 14px;
+  padding: 1.3rem 1.7rem;
+  margin-left: 22px;
+  box-shadow: 0 2px 24px #00ffe71a, 0 1.5px 8px #000a;
+  width: 100%;
+  border: 1.5px solid #232a33;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.timeline-content:hover {
+  box-shadow: 0 4px 32px #00ffe799, 0 1.5px 8px #000a;
+  border-color: #00ffe7;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-speaker {
+  font-weight: 700;
+  color: #00ffe7;
+  font-size: 1.13rem;
+  letter-spacing: 0.01em;
+}
+
+.timeline-time {
+  font-size: 0.98rem;
+  color: #6ee7ff;
+  font-weight: 500;
+}
+
+.timeline-text {
+  margin-bottom: 0.7rem;
+  font-size: 1.11rem;
+  color: #e6e6e6;
+}
+
+.timeline-suggestions {
+  margin-top: 0.5rem;
+}
+
+.timeline-suggestion {
+  background: rgba(35, 42, 51, 0.98);
+  border-left: 4px solid #00ffe7;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+  font-size: 1.01rem;
+  color: #fff;
+  box-shadow: 0 1px 8px #00ffe733;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.timeline-suggestion-action_item { border-left-color: #00ffe7; }
+.timeline-suggestion-trigger_event { border-left-color: #00bfff; }
+.timeline-suggestion-root_cause { border-left-color: #ffb300; }
+.timeline-suggestion-metadata { border-left-color: #888; }
+.timeline-suggestion:hover {
+  border-left-color: #fff;
+  box-shadow: 0 2px 16px #00ffe799;
+}
+
+.timeline-priority {
+  margin-left: 0.7em;
+  font-size: 0.97em;
+  padding: 0.13em 0.6em;
+  border-radius: 4px;
+  background: #1a2230;
+  color: #00ffe7;
+  font-weight: 600;
+  box-shadow: 0 0 4px #00ffe7cc;
+}
+.timeline-priority-high { color: #ff4c4c; background: #2a1818; box-shadow: 0 0 6px #ff4c4c99; }
+.timeline-priority-medium { color: #ffb300; background: #2a2318; box-shadow: 0 0 6px #ffb30099; }
+.timeline-priority-low { color: #00ffe7; background: #18232a; box-shadow: 0 0 6px #00ffe799; }
+
+.toggle-container {
+  display: flex;
+  justify-content: flex-end;
+  margin: 2rem 2rem 0 0;
+}
+.toggle-btn {
+  background: linear-gradient(90deg, #00ffe7 0%, #00bfff 100%);
+  color: #181c20;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8em 1.7em;
+  font-size: 1.13em;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 12px #00ffe7aa;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  margin-bottom: 1.7rem;
+  letter-spacing: 0.01em;
+}
+.toggle-btn:hover {
+  background: linear-gradient(90deg, #00bfff 0%, #00ffe7 100%);
+  color: #fff;
+  box-shadow: 0 4px 24px #00ffe7cc;
+}
+
+/* Real-Time Suggestions Horizontal Bar */
+.realtime-suggestions-bar {
+  width: 100%;
+  background: rgba(20, 24, 32, 0.98);
+  padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+  margin-bottom: 2.2rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 24px #00ffe71a, 0 1.5px 8px #000a;
+  overflow-x: auto;
+  border: 1.5px solid #232a33;
+}
+.realtime-suggestions-scroll {
+  display: flex;
+  flex-direction: row;
+  gap: 1.2rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #00ffe7 #232a33;
+}
+.realtime-suggestion-card {
+  min-width: 260px;
+  max-width: 340px;
+  background: linear-gradient(135deg, #232a33 60%, #1a2230 100%);
+  color: #fff;
+  border-radius: 10px;
+  padding: 1rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 2px 16px #00ffe733, 0 1.5px 8px #000a;
+  border-left: 4px solid #00ffe7;
+  font-size: 1.05rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  border: 1.5px solid #232a33;
+}
+.realtime-suggestion-card:hover {
+  box-shadow: 0 4px 32px #00ffe799, 0 1.5px 8px #000a;
+  border-left-color: #00bfff;
+}
+.realtime-suggestion-type {
+  font-weight: 700;
+  color: #00ffe7;
+  margin-bottom: 0.2em;
+  letter-spacing: 0.01em;
+}
+.realtime-suggestion-content {
+  margin-bottom: 0.3em;
+  color: #e6e6e6;
+  font-size: 1.07em;
+}
+
+/* Custom dark scrollbar for horizontal scroll */
+.realtime-suggestions-scroll::-webkit-scrollbar {
+  height: 10px;
+  background: #181c20;
+  border-radius: 6px;
+}
+.realtime-suggestions-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #00ffe7 0%, #00bfff 100%);
+  border-radius: 6px;
+}
+
+/* Modal Styles for Suggestions */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 12, 16, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: rgba(24, 28, 36, 0.98);
+  border-radius: 18px;
+  box-shadow: 0 8px 48px #00ffe733, 0 2px 16px #000a;
+  padding: 2.2rem 2.5rem 2rem 2.5rem;
+  min-width: 340px;
+  max-width: 95vw;
+  color: #e6e6e6;
+  position: relative;
+  border: 2px solid #00ffe7;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.close-modal-btn {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.3rem;
+  background: none;
+  border: none;
+  color: #00ffe7;
+  font-size: 2.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+}
+.close-modal-btn:hover {
+  color: #ff4c4c;
+}
+#modal-suggestions-list {
+  margin-top: 1.2rem;
+  width: 100%;
+}
+#modal-suggestions-list .timeline-suggestion {
+  margin-bottom: 1.1rem;
+  font-size: 1.08rem;
+  box-shadow: 0 2px 12px #00ffe733;
+  background: rgba(35, 42, 51, 0.98);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  border-left-width: 6px;
+}
+.no-suggestions {
+  color: #888;
+  font-size: 1.1rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+@media (max-width: 600px) {
+  .modal-content {
+    min-width: 90vw;
+    padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+  }
+}
+
+.horizontal-timeline {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: visible;
+  max-width: 100vw;
+  padding-left: 0;
+  padding-top: 60px;
+  border-left: none;
+  border-top: 3px solid #1a2230;
+  background: rgba(20, 24, 32, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 4px 32px #00ffe71a, 0 1.5px 8px #000a;
+  min-height: 420px;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: #00ffe7 #232a33;
+}
+.horizontal-timeline .timeline-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 340px;
+  max-width: 420px;
+  margin-right: 2.5rem;
+  margin-bottom: 0;
+  position: relative;
+}
+.horizontal-timeline .timeline-dot {
+  position: absolute;
+  top: -38px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, #00ffe7 0%, #00bfff 100%);
+  border-radius: 50%;
+  border: 4px solid #0a0c10;
+  box-shadow: 0 0 16px #00ffe7cc, 0 0 2px #00bfff;
+  z-index: 2;
+}
+.horizontal-timeline .timeline-content {
+  margin-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 0;
+  background: rgba(18, 22, 28, 0.98);
+  color: #e6e6e6;
+  border-radius: 14px;
+  padding: 1.3rem 1.7rem;
+  box-shadow: 0 2px 24px #00ffe71a, 0 1.5px 8px #000a;
+  width: 100%;
+  border: 1.5px solid #232a33;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  min-height: 180px;
+  margin-top: 10px;
+}
+.horizontal-timeline .timeline-entry:last-child {
+  margin-right: 0;
+}
+.horizontal-timeline {
+  /* Hide vertical border, show horizontal */
+  border-left: none !important;
+  border-top: 3px solid #1a2230 !important;
+}
+
+/* Custom dark scrollbar for horizontal timeline */
+.horizontal-timeline::-webkit-scrollbar {
+  height: 12px;
+  background: #181c20;
+  border-radius: 6px;
+}
+.horizontal-timeline::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #00ffe7 0%, #00bfff 100%);
+  border-radius: 6px;
+}
+
+.speaker-badge {
+  color: #fff !important;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 1px 6px #000a;
+  letter-spacing: 0.03em;
+  background: #232a33;
+  padding: 6px 18px;
+  font-size: 0.92rem;
+  text-shadow: 0 1px 4px #000a;
+  border-radius: 20px;
+  transition: background 0.2s, color 0.2s;
+}
+.speaker-badge.bg-primary    { background: linear-gradient(90deg, #00bfff 0%, #00ffe7 100%); color: #181c20 !important; }
+.speaker-badge.bg-success    { background: linear-gradient(90deg, #00ff88 0%, #00ffe7 100%); color: #181c20 !important; }
+.speaker-badge.bg-warning    { background: linear-gradient(90deg, #ffb300 0%, #ffea00 100%); color: #181c20 !important; }
+.speaker-badge.bg-info       { background: linear-gradient(90deg, #00ffe7 0%, #00bfff 100%); color: #181c20 !important; }
+.speaker-badge.bg-danger     { background: linear-gradient(90deg, #ff4c4c 0%, #ffb300 100%); color: #fff !important; }
+.speaker-badge.bg-secondary  { background: linear-gradient(90deg, #888 0%, #232a33 100%); color: #fff !important; }
+.speaker-badge:hover {
+  filter: brightness(1.1) drop-shadow(0 0 8px #00ffe7cc);
+  cursor: pointer;
+}
+
+.incident-participants-heading {
+  color: #00ffe7;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+  text-shadow: 0 1px 8px #00ffe733;
+}
+
+@media (max-width: 900px) {
+  .timeline-container {
+    max-width: 99vw;
+    padding-left: 10px;
+  }
+  .realtime-suggestion-card {
+    min-width: 180px;
+    font-size: 0.97em;
+    padding: 0.7rem 0.7rem;
+  }
+  .horizontal-timeline .timeline-entry {
+    min-width: 220px;
+    max-width: 320px;
+    margin-right: 1.2rem;
+  }
+  .horizontal-timeline .timeline-content {
+    padding: 1rem 0.7rem;
+    min-height: 120px;
+  }
+}

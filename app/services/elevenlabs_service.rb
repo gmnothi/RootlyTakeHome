@@ -1,12 +1,12 @@
 class ElevenlabsService
   def initialize
-    @api_key = ENV['ELEVENLABS_API_KEY']
+    @api_key = ENV["ELEVENLABS_API_KEY"]
     @base_url = "https://api.elevenlabs.io/v1"
   end
 
   def text_to_speech(text, voice_id = "21m00Tcm4TlvDq8ikWAM", model_id = "eleven_monolingual_v1")
     # If no API key is set, return mock audio data for demo
-    if @api_key.blank? || @api_key == 'your_elevenlabs_api_key_here'
+    if @api_key.blank? || @api_key == "your_elevenlabs_api_key_here"
       return generate_mock_audio_data(text)
     end
 
@@ -64,7 +64,7 @@ class ElevenlabsService
   def generate_incident_audio(suggestion_text)
     # Create a more natural-sounding text for TTS
     audio_text = "Suggestion: #{suggestion_text}"
-    
+
     text_to_speech(audio_text)
   end
 
@@ -75,4 +75,4 @@ class ElevenlabsService
     # In a real app, this would be actual audio data
     "mock_audio_data_for_#{text.length}_characters"
   end
-end 
+end
